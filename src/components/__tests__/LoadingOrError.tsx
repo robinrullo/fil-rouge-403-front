@@ -5,7 +5,7 @@ describe('<LoadingOrError />', () => {
 	it('renders', () => {
 		render(<LoadingOrError />)
 
-		expect(screen.getByText('Loading...')).toBeInTheDocument()
+		expect(screen.getByText('Chargement...')).toBeInTheDocument()
 	})
 	it('renders with an error message', () => {
 		render(<LoadingOrError error={new Error('Failed to fetch')} />)

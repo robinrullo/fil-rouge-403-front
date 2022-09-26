@@ -1,10 +1,11 @@
 import { rest } from 'msw'
-import fruits from './data/fruits.json'
+import pois from './data/pois.json'
+import routing from './data/routing.json'
 
 const handlers = [
-	rest.get(
-		'https://614c99f03c438c00179faa84.mockapi.io/fruits',
-		(_, response, context) => response(context.json(fruits))
+	rest.get('/api/pois', (_, response, context) => response(context.json(pois))),
+	rest.post('/api/pois', (_, response, context) =>
+		response(context.json(routing))
 	)
 ]
 
