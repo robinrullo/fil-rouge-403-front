@@ -1,61 +1,106 @@
+import pois from '../../src/mocks/data/pois.json'
+import routing from '../../src/mocks/data/routing.json'
+import { PoiFeature } from '../../src/types'
+import { APPLICATION_NAME } from '../../src/const'
+
 function get(id: string): ReturnType<typeof cy.get> {
 	return cy.findByTestId(id)
 }
 
-const IMAGE_URL = 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6'
-const AUTHOR_URL = 'https://unsplash.com/@cenali'
+// eslint-disable-next-line no-underscore-dangle
+const getPoi = (id: number): PoiFeature =>
+	pois._embedded.pois.find(
+		poi => poi.properties.id === id
+	) as unknown as PoiFeature
 
 describe('Basic flow', () => {
 	beforeEach(() => {
 		cy.viewport('macbook-13')
+		cy.intercept({ method: 'GET', url: '/api/pois' }, { body: pois }).as(
+			'getPois'
+		)
+		cy.intercept({ method: 'POST', url: '/api/routing' }, { body: routing }).as(
+			'routing'
+		)
 	})
 
-	it('Should render the fruit gallery correctly', () => {
+	it('Should render the home page correctly', () => {
 		cy.visit('/')
 
-		cy.findAllByTestId('FruitCard').should('have.length', 6)
-		cy.findAllByTestId('FruitCardImage')
+		cy.findByText(APPLICATION_NAME).should('exist')
+		cy.findByText('Arrêts de bus').should('exist')
+	})
+
+	it('Should generate routing when selecting pois', () => {
+		/* Arrange */
+		const firstPoi = getPoi(535)
+		const secondPoi = getPoi(540)
+		const thirdPoi = getPoi(549)
+
+		/* Act */
+		// Click on pois
+		get(`map-marker-${firstPoi.properties.id}`).parent().click({ force: true })
+		get(`map-marker-${secondPoi.properties.id}`)
 			.first()
-			.should('have.attr', 'src')
-			.and('contain', IMAGE_URL)
-		cy.findAllByTestId('FruitImageAuthor')
+			.parent()
+			.click({ force: true })
+
+		/* Assert */
+		// Check if routing is made
+		cy.wait('@routing').its('response.statusCode').should('eq', 200)
+
+		/* Act */
+		// Add third poi to list
+		get(`map-marker-${thirdPoi.properties.id}`)
 			.first()
-			.should('have.text', 'Matheus Cenali')
-			.and('have.attr', 'href', AUTHOR_URL)
+			.parent()
+			.click({ force: true })
+
+		/* Assert */
+		// Check if routing is made
+		cy.wait('@routing').its('response.statusCode').should('eq', 200)
+		// Check if poi is selected
+		cy.findByText(firstPoi.properties.name).should('exist')
+		cy.findByText(secondPoi.properties.name).should('exist')
+		cy.findByText(thirdPoi.properties.name).should('exist')
+
+		/* Act */
+		cy.findByText(firstPoi.properties.name)
+			.parent()
+			.findAllByTestId('delete-poi')
 			.click()
-		cy.findAllByTestId('FruitCardName').first().should('have.text', 'Apple')
+		/* Assert */
+		cy.wait('@routing')
+		cy.findByText(firstPoi.properties.name).should('not.exist')
+
+		/* Act */
+		cy.findByText(secondPoi.properties.name)
+			.parent()
+			.findAllByTestId('delete-poi')
+			.click()
+		/* Assert */
+		cy.findByText(secondPoi.properties.name).should('not.exist')
+
+		/* Act */
+		cy.findByText(thirdPoi.properties.name)
+			.parent()
+			.findAllByTestId('delete-poi')
+			.click()
+		/* Assert */
+		cy.findByText(thirdPoi.properties.name).should('not.exist')
 	})
 
-	it('Should navigate to the details page on click', () => {
-		cy.findAllByTestId('FruitCardName').first().click()
-		cy.location('pathname').should('eq', `/apple`)
-	})
-
-	it('Should go back to gallery on back button click', () => {
-		get('BackLink').click()
-		cy.location('pathname').should('eq', '/')
-	})
-
-	it('Should navigate to the details page on enter', () => {
-		cy.findAllByTestId('FruitCard').first().focus().type('{enter}')
-		cy.location('pathname').should('eq', `/apple`)
-	})
-
-	it('Should render the fruit details correctly', () => {
-		get('FruitImage').should('have.attr', 'src').and('contain', IMAGE_URL)
-		get('FruitName').should('have.text', 'Apple')
-	})
-
-	it('Should render a error message', () => {
+	it('Should render an error message', () => {
+		/* Arrange */
 		cy.viewport('iphone-xr')
-		cy.intercept('/fruits', request => request.destroy()).as('getPois')
-		cy.reload()
-		cy.wait('@getPois')
-		get('LoadingOrError').should('not.have.text', 'Loading')
-	})
 
-	it('Should redirect to gallery when trying to access a invalid fruit', () => {
-		cy.visit('/cypress')
-		cy.location('pathname').should('eq', '/')
+		cy.intercept('/api/pois', response => response.destroy()).as('getPoisError')
+
+		/* Act */
+		cy.reload()
+
+		/* Assert */
+		cy.wait('@getPoisError')
+		get('LoadingOrError').should('not.have.text', 'Chargement...')
 	})
 })

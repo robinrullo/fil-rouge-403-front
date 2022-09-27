@@ -135,7 +135,7 @@ export default function Home(): ReactElement {
 						onClick={(event): void => onNewPoiSelected(event, feature)}
 						anchor='bottom'
 					>
-						<Pin />
+						<Pin data-testid={`map-marker-${feature.properties.id}`} />
 					</Marker>
 				)
 			})
@@ -228,6 +228,7 @@ export default function Home(): ReactElement {
 													</td>
 													<td className='whitespace-nowrap px-6 py-4 text-sm font-light text-white'>
 														<button
+															data-testid='delete-poi'
 															type='button'
 															className='inline-flex items-center rounded-md bg-red-600 px-2 py-2 text-sm font-medium text-white hover:bg-red-700'
 															onClick={(event): void =>

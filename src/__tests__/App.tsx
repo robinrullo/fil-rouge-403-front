@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import App from 'App'
 import renderWithProviders from 'testUtils'
+import { APPLICATION_NAME } from '../const'
 
 describe('<App />', () => {
 	it('renders', async () => {
@@ -8,12 +9,11 @@ describe('<App />', () => {
 		renderWithProviders(<App />, false)
 
 		expect(screen.getByText('Chargement...')).toBeInTheDocument()
-		/* await expect(screen.findByText('Apple')).resolves.toBeInTheDocument()
-		await userEvent.click(screen.getByText('Apple'))
-
-		expect(screen.getByText('Loading...')).toBeInTheDocument()
 		await expect(
-			screen.findByText('Vitamins per 100 g (3.5 oz)')
-		).resolves.toBeInTheDocument() */
+			screen.findByText(APPLICATION_NAME)
+		).resolves.toBeInTheDocument()
+		await expect(
+			screen.findByText('Arrêts de bus')
+		).resolves.toBeInTheDocument()
 	})
 })

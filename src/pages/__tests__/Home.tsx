@@ -1,24 +1,21 @@
-import GalleryPage from 'pages/Home'
+import { screen } from '@testing-library/react'
+import Home from 'pages/Home'
 import renderWithProviders, {
 	MOBILE_RESOLUTION_HEIGHT,
 	MOBILE_RESOLUTION_WIDTH
 } from 'testUtils'
+import App from '../../App'
 
-describe('<Gallery />', () => {
+describe('<Home />', () => {
 	it('renders', async () => {
-		renderWithProviders(<GalleryPage />)
+		// Arrange
+		window.history.pushState({}, 'Home', '/')
+		renderWithProviders(<App />, false)
 
-		/* await expect(
-			screen.findByRole('img', { name: 'Apple' })
-		).resolves.toHaveAttribute('loading', 'eager')
-		expect(screen.getByText('Banana')).toBeInTheDocument() */
+		expect(screen.getByText('Chargement...')).toBeInTheDocument()
 	})
 	it('renders with mobile resolution', async () => {
 		window.resizeTo(MOBILE_RESOLUTION_WIDTH, MOBILE_RESOLUTION_HEIGHT)
-		renderWithProviders(<GalleryPage />)
-
-		/* await expect(
-			screen.findByRole('img', { name: 'Grape' })
-		).resolves.toHaveAttribute('loading', 'lazy') */
+		renderWithProviders(<Home />)
 	})
 })

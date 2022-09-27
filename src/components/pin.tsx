@@ -13,9 +13,10 @@ const pinStyle = {
 	stroke: 'none'
 }
 
-function Pin({ size = ICON_SIZE }): ReactElement<SVGElement> {
+function Pin({ size = ICON_SIZE, ...rest }): ReactElement<SVGElement> {
 	return (
-		<svg height={size} viewBox='0 0 24 24' style={pinStyle}>
+		// eslint-disable-next-line react/jsx-props-no-spreading
+		<svg height={size} viewBox='0 0 24 24' style={pinStyle} {...rest}>
 			<path d={ICON} />
 		</svg>
 	)

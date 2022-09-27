@@ -4,7 +4,7 @@ import routing from './data/routing.json'
 
 const handlers = [
 	rest.get('/api/pois', (_, response, context) => response(context.json(pois))),
-	rest.post('/api/pois', (_, response, context) =>
+	rest.post('/api/routing', (_, response, context) =>
 		response(context.json(routing))
 	)
 ]

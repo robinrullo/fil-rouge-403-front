@@ -4,7 +4,7 @@ export type PoiFeatureCollection = FeatureCollection<Point, PoiProperties>
 export type PoiFeature = Feature<Point, PoiProperties>
 
 export interface PoiProperties {
-	id: string
+	id: number
 	name: string
 	address?: string
 }
