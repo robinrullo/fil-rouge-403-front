@@ -207,11 +207,11 @@ export default function Home(): ReactElement {
 							<div className='inline-block min-w-full py-2 sm:px-6 lg:px-8'>
 								<div className='overflow-hidden'>
 									<table className='min-w-full'>
-										<thead className='border-b'>
+										<thead className='border-b-2'>
 											<tr>
 												<th
 													scope='col'
-													className='px-6 py-4 text-left text-sm font-medium text-white'
+													className='px-6 py-4 text-left text-sm font-medium'
 												>
 													Arrêts de bus
 												</th>
@@ -223,10 +223,10 @@ export default function Home(): ReactElement {
 													key={`poi-list-${f.properties.id}`}
 													className='border-b'
 												>
-													<td className='whitespace-nowrap px-6 py-4 text-sm font-medium text-white'>
+													<td className='whitespace-nowrap px-6 py-4 text-sm'>
 														{f.properties.name}
 													</td>
-													<td className='whitespace-nowrap px-6 py-4 text-sm font-light text-white'>
+													<td className='whitespace-nowrap px-6 py-4 text-sm font-light'>
 														<button
 															data-testid='delete-poi'
 															type='button'
